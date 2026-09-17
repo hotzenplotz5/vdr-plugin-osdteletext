@@ -18,10 +18,16 @@ required_receiver = (
     'TeletextService::ClearLiveService();',
     'TeletextService::SetReceiverActive(',
 )
+required_service_rendering = (
+    'unsigned char *renderBytes = reinterpret_cast<unsigned char *>(&renderData);',
+    'renderer.ReadTeletextHeader(renderBytes);',
+    'renderer.RenderTeletextCode(renderBytes + sizeof(renderData.pageheader));',
+)
 forbidden_service = (
     'openForReading(',
     'getFilename(',
     '/var/cache/vdr/vtx',
+    'renderer.RenderTeletextCode(reinterpret_cast<unsigned char *>(&renderData));',
 )
 
 for needle in required_osd:
@@ -30,8 +36,11 @@ for needle in required_osd:
 for needle in required_receiver:
     if needle not in txtrecv:
         raise SystemExit(f"missing receiver service wiring: {needle}")
+for needle in required_service_rendering:
+    if needle not in service:
+        raise SystemExit(f"missing service renderer wiring: {needle}")
 for needle in forbidden_service:
     if needle in service:
-        raise SystemExit(f"service must not depend on disk cache path/read API: {needle}")
+        raise SystemExit(f"forbidden service wiring: {needle}")
 
 print("teletext service wiring: PASS")

@@ -346,7 +346,9 @@ inline void FillPageReply(OsdTeletextGetPageV1 &reply)
    TelePageData renderData;
    std::memcpy(&renderData, &snapshot.data, sizeof(renderData));
    cRenderPage renderer;
-   renderer.RenderTeletextCode(reinterpret_cast<unsigned char *>(&renderData));
+   unsigned char *renderBytes = reinterpret_cast<unsigned char *>(&renderData);
+   renderer.ReadTeletextHeader(renderBytes);
+   renderer.RenderTeletextCode(renderBytes + sizeof(renderData.pageheader));
 
    for (unsigned int y = 0; y < OSDTELETEXT_PAGE_ROWS; ++y) {
       for (unsigned int x = 0; x < OSDTELETEXT_PAGE_COLUMNS; ++x) {
