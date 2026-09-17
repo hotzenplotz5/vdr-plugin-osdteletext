@@ -321,8 +321,8 @@ inline void FillPageReply(OsdTeletextGetPageV1 &reply)
       return;
    }
 
-   RawPageSnapshot snapshot;
-   ServiceStateSnapshot state;
+   RawPageSnapshot snapshot = {};
+   ServiceStateSnapshot state = {};
    reply.result = Store().Read(requestedChannel, pageCode, requestedSubpage, snapshot, state);
    reply.serviceEpoch = state.serviceEpoch;
    reply.receiverActive = state.receiverActive ? 1 : 0;
